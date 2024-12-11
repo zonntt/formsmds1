@@ -17,15 +17,16 @@
             height: 100vh;
         }
         .form-container {
-            background-color: #1e1e1e;
+            background-color: #282828;
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            width: 400px;
+            width: 100%;
+            max-width: 400px;
         }
-        .form-container h1 {
+        .form-container h2 {
             text-align: center;
-            color: #4caf50;
+            margin-bottom: 20px;
         }
         .form-container label {
             display: block;
@@ -36,23 +37,18 @@
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
-            border: 1px solid #555;
-            border-radius: 5px;
-            background-color: #2a2a2a;
-            color: #fff;
-        }
-        .form-container input::placeholder {
-            color: #aaa;
+            border: none;
+            border-radius: 4px;
         }
         .form-container button {
             width: 100%;
             padding: 10px;
-            background-color: #4caf50;
-            color: #fff;
+            background-color: #4CAF50;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
             cursor: pointer;
-            font-size: 16px;
         }
         .form-container button:hover {
             background-color: #45a049;
@@ -61,25 +57,65 @@
 </head>
 <body>
     <div class="form-container">
-        <h1>Заявка</h1>
-        <form action="#" method="post">
-            <label for="email">Ваша електронна адреса:</label>
-            <input type="email" id="email" name="email" placeholder="example@email.com" required>
-
+        <h2>Форма заявки</h2>
+        <form id="application-form">
+            <label for="email">Електронна адреса:</label>
+            <input type="email" id="email" name="email" required>
+            
             <label for="fullname">Прізвище, ім’я та по батькові:</label>
-            <input type="text" id="fullname" name="fullname" placeholder="Ваше ім'я" required>
-
+            <input type="text" id="fullname" name="fullname" required>
+            
             <label for="age">Ваш вік:</label>
-            <input type="number" id="age" name="age" placeholder="Наприклад: 18" min="15" required>
-
+            <input type="number" id="age" name="age" required>
+            
             <label for="telegram">Ваш Telegram:</label>
-            <input type="text" id="telegram" name="telegram" placeholder="@username" required>
-
+            <input type="text" id="telegram" name="telegram" required>
+            
             <label for="discord">Ваш Discord:</label>
-            <input type="text" id="discord" name="discord" placeholder="Ваш Discord" required>
-
-            <button type="submit">Надіслати заявку</button>
+            <input type="text" id="discord" name="discord" required>
+            
+            <button type="submit">Надіслати</button>
         </form>
     </div>
+
+    <script>
+        document.getElementById('application-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const webhookURL = "https://discord.com/api/webhooks/1316506256089022494/d0_O3EIvl3g86gU7sxjLKkBYe412dWnWU6APIXFyYGH9D5_5rvlfFZzbaCXODMahgxSB";
+
+            const formData = {
+                email: document.getElementById('email').value,
+                fullname: document.getElementById('fullname').value,
+                age: document.getElementById('age').value,
+                telegram: document.getElementById('telegram').value,
+                discord: document.getElementById('discord').value
+            };
+
+            const message = {
+                content: "**Нова заявка на модератора:**\n" +
+                         `- **Електронна адреса:** ${formData.email}\n` +
+                         `- **Прізвище, ім'я, по батькові:** ${formData.fullname}\n` +
+                         `- **Вік:** ${formData.age}\n` +
+                         `- **Telegram:** ${formData.telegram}\n` +
+                         `- **Discord:** ${formData.discord}`
+            };
+
+            try {
+                await fetch(webhookURL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(message)
+                });
+                alert('Дані успішно надіслані!');
+                document.getElementById('application-form').reset();
+            } catch (error) {
+                console.error('Помилка надсилання:', error);
+                alert('Сталася помилка під час надсилання даних.');
+            }
+        });
+    </script>
 </body>
 </html>
